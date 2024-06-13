@@ -1,0 +1,29 @@
+{
+    "cookiecutter": {
+        "codeowner_github_usernames": "abates",
+        "full_name": "Andrew Bates",
+        "email": "abates@omeganetserv.com",
+        "github_org": "abates",
+        "system_of_record": "Unifi",
+        "system_of_record_camel": "Unifi",
+        "system_of_record_slug": "unifi",
+        "app_name": "nautobot_ssot_unifi",
+        "verbose_name": "Nautobot Ssot Unifi",
+        "app_slug": "nautobot-ssot-unifi",
+        "project_slug": "nautobot-app-ssot-unifi",
+        "repo_url": "https://github.com/abates/nautobot-app-ssot-unifi",
+        "base_url": "ssot-unifi",
+        "min_nautobot_version": "2.0.0",
+        "max_nautobot_version": "2.9999",
+        "camel_name": "NautobotSSOTUnifi",
+        "project_short_description": "Nautobot SSoT integration for Ubiquiti Unifi.",
+        "model_class_name": "None",
+        "open_source_license": "Apache-2.0",
+        "docs_base_url": "https://docs.nautobot.com",
+        "docs_app_url": "https://docs.nautobot.com/projects/nautobot-ssot-unifi/en/latest",
+        "_template": "cookiecutter-nautobot-app/nautobot-app-ssot/",
+        "_output_dir": "/Users/abates/local/devel",
+        "_repo_dir": "cookiecutter-nautobot-app/nautobot-app-ssot/",
+        "_checkout": null
+    }
+}
