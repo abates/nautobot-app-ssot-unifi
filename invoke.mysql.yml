@@ -1,7 +1,7 @@
 ---
 nautobot_ssot_unifi:
   project_name: "nautobot-ssot-unifi"
-  nautobot_ver: "2.0.0"
+  nautobot_ver: "2.2.0"
   local: false
   python_ver: "3.11"
   compose_dir: "development"
