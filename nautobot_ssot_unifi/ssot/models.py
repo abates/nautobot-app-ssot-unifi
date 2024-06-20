@@ -95,14 +95,13 @@ class DeviceTypeModel(UnifiModelMixin, NautobotModel):
         "manufacturer__name",
         "model",
     )
-    _attributes = (
-        "part_number",
-    )
+    _attributes = ("part_number",)
 
     manufacturer__name: str = UNIFI_MANUFACTURER
     model: str
 
     part_number: str = ""
+
 
 class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
     """Device model."""

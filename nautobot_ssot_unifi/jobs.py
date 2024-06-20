@@ -1,4 +1,5 @@
 """Jobs for Unifi SSoT integration."""
+
 import csv
 import logging
 from os import path
@@ -114,7 +115,7 @@ class UnifiDataSource(DataSource, Job):
 
     def run(
         self, dryrun, debug, controller, default_location, location_type, *args, **kwargs
-    ):  # pylint: disable=arguments-differ,too-many-arguments
+    ):  # pylint: disable=arguments-differ,too-many-arguments,attribute-defined-outside-init
         """Perform data synchronization."""
         self.dryrun = dryrun
         self.debug = debug
@@ -126,7 +127,7 @@ class UnifiDataSource(DataSource, Job):
             self.logger.setLevel(logging.DEBUG)
         else:
             self.logger.setLevel(logging.INFO)
-        with open(path.join(path.dirname(__file__), "hardware_models.csv")) as csvfile:
+        with open(path.join(path.dirname(__file__), "hardware_models.csv"), encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
             for record in reader:
                 self.hardware_models[record["model"]] = record

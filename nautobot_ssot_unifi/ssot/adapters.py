@@ -167,7 +167,7 @@ class UnifiAdapter(UnifiAdapterMixin, DiffSync):
                     device_type__model=unifi_device.model,
                     role__name=UNIFI_MAP[unifi_type]["role"],
                     serial=unifi_device.raw["serial"],
-                    platform__name=UNIFI_MAP[unifi_type]["platform"]
+                    platform__name=UNIFI_MAP[unifi_type]["platform"],
                 )
                 await self._debug("Adding device %s", device)
                 self.add(device)
@@ -195,4 +195,3 @@ class UnifiAdapter(UnifiAdapterMixin, DiffSync):
                         device.primary_ip4__host = str(ip_address.ip)
                     else:
                         device.primary_ip6__host = str(ip_address.ip)
-                    
