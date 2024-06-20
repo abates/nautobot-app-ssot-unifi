@@ -86,7 +86,7 @@ class UnifiAdapter(UnifiAdapterMixin, DiffSync):
             unifi_port_id=port_id,
         )
 
-    async def _assign_ip(self, ip: str, netmask: str, interface: str):
+    async def _assign_ip(self, ip: str, netmask: str, interface: str) -> IPNetwork:
         ip_address = IPNetwork(f"{ip}/{netmask}")
         prefix, created = self.get_or_add_model_instance(
             self.prefix(
@@ -112,6 +112,7 @@ class UnifiAdapter(UnifiAdapterMixin, DiffSync):
                 ip_address__host=ip,
             )
             self.add(assignment)
+        return ip_address
 
     @async_to_sync
     async def load(self, host, port, username, password, verify_cert, timeout):
@@ -172,9 +173,13 @@ class UnifiAdapter(UnifiAdapterMixin, DiffSync):
                 if unifi_device.raw["config_network"] and unifi_device.raw["config_network"]["type"] == "static":
                     interface = self._create_interface(device, "mgmt", UNIFI_SSOT_INTERFACE_TYPES["other"], -1)
                     await self._debug("Setting management interface info: %s", unifi_device.raw["config_network"])
-                    await self._assign_ip(
+                    ip_address = await self._assign_ip(
                         unifi_device.raw["config_network"]["ip"],
                         unifi_device.raw["config_network"]["netmask"],
                         interface,
                     )
-                    self.add(interface)
+                    if ip_address.version == 4:
+                        device.primary_ip4__host = str(ip_address.ip)
+                    else:
+                        device.primary_ip6__host = str(ip_address.ip)
+                    

@@ -115,6 +115,8 @@ class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
         "device_type__model",
         "role__name",
         "location__name",
+        "primary_ip4__host",
+        "primary_ip6__host",
     )
     _perform_delete = True
 
@@ -124,6 +126,8 @@ class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
     device_type__model: str
     role__name: str
     location__name: str
+    primary_ip4__host: str = None
+    primary_ip6__host: str = None
 
     status_id: uuid.UUID = None
 
@@ -158,8 +162,6 @@ class InterfaceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
     _attributes = (
         "type",
         "unifi_port_id",
-        "primary_ip4__host",
-        "primary_ip6__host",
     )
     _perform_delete = True
 
@@ -171,8 +173,6 @@ class InterfaceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
 
     type: str
     unifi_port_id: Annotated[int, CustomFieldAnnotation(name="unifi_port_id")] = None
-    primary_ip4__host: str = None
-    primary_ip6__host: str = None
 
     status_id: uuid.UUID = None
 
