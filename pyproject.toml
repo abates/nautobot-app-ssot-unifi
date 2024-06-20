@@ -27,10 +27,11 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.12"
+python = ">=3.11,<3.12"
 # Used for local development
-nautobot = "^2.0.0"
+nautobot = "^2.2.0"
 nautobot-ssot = "^2.0.0"
+aiounifi = "74"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "*"

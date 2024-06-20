@@ -1,13 +1,11 @@
 """Test Unifi adapter."""
 
 import json
-import uuid
 from unittest.mock import MagicMock
 
-from django.contrib.contenttypes.models import ContentType
-from nautobot.extras.models import Job, JobResult
+from nautobot.extras.models import JobResult
 from nautobot.core.testing import TransactionTestCase
-from nautobot_ssot_unifi.diffsync.adapters.unifi import UnifiAdapter
+from nautobot_ssot_unifi.ssot.adapters import UnifiAdapter
 from nautobot_ssot_unifi.jobs import UnifiDataSource
 
 
@@ -31,10 +29,13 @@ class TestUnifiAdapterTestCase(TransactionTestCase):
         self.unifi_client.get_devices.return_value = DEVICE_FIXTURE
 
         self.job = UnifiDataSource()
-        self.job.job_result = JobResult.objects.create(
-            name=self.job.class_path, obj_type=ContentType.objects.get_for_model(Job), user=None, job_id=uuid.uuid4()
+        self.job.job_result = JobResult.objects.create(name=self.job.class_path, user=None)
+        self.unifi = UnifiAdapter(
+            job=self.job,
+            controller_name="test controller",
+            default_location_type="site",
+            default_location_name="Site",
         )
-        self.unifi = UnifiAdapter(job=self.job, sync=None, client=self.unifi_client)
 
     def test_data_loading(self):
         """Test Nautobot Ssot Unifi load() function."""

@@ -1,8 +1,11 @@
 """App declaration for nautobot_ssot_unifi."""
+
 # Metadata is inherited from Nautobot. If not including Nautobot in the environment, this should be added
 from importlib import metadata
 
-from nautobot.apps import NautobotAppConfig
+from nautobot.apps import NautobotAppConfig, nautobot_database_ready
+
+from nautobot_ssot_unifi.sigals import nautobot_database_ready_callback
 
 __version__ = metadata.version(__name__)
 
@@ -21,6 +24,12 @@ class NautobotSSOTUnifiConfig(NautobotAppConfig):
     max_version = "2.9999"
     default_settings = {}
     caching_config = {}
+
+    def ready(self):
+        """Trigger callback when database is ready."""
+        super().ready()
+
+        nautobot_database_ready.connect(nautobot_database_ready_callback, sender=self)
 
 
 config = NautobotSSOTUnifiConfig  # pylint:disable=invalid-name

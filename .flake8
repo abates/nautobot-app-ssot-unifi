@@ -10,3 +10,4 @@ exclude =
   manage.py,
   settings.py,
   .venv
+  dist
