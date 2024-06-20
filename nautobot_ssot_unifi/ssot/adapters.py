@@ -8,7 +8,7 @@ from nautobot.apps.jobs import Job
 
 from nautobot_ssot.contrib import NautobotAdapter
 
-from nautobot_ssot_unifi.const import UNIFI_ROLE_MAP, UNIFI_SSOT_INTERFACE_TYPES
+from nautobot_ssot_unifi.const import UNIFI_MAP, UNIFI_SSOT_INTERFACE_TYPES
 from nautobot_ssot_unifi.ssot import models
 
 from nautobot_ssot_unifi.unifi import Client
@@ -143,7 +143,18 @@ class UnifiAdapter(UnifiAdapterMixin, DiffSync):
             self.add(site)
 
             for unifi_device in await self.client.get_devices():
-                device_type = self.device_type(model=unifi_device.model)
+                unifi_info = self.job.hardware_models[unifi_device.model]
+                unifi_type = unifi_info["type"]
+                if unifi_type == "usw":
+                    if "lite" in unifi_info["name"].lower():
+                        unifi_type = "usw_lite"
+                    elif "flex" in unifi_info["name"].lower():
+                        unifi_type = "usw_flex"
+
+                device_type = self.device_type(
+                    model=unifi_device.model,
+                    part_number=unifi_info["sku"],
+                )
                 _, created = self.get_or_add_model_instance(device_type)
                 if created:
                     await self._debug("Added device type %s", device_type)
@@ -154,7 +165,9 @@ class UnifiAdapter(UnifiAdapterMixin, DiffSync):
                     controller_managed_device_group__controller__name=self.job.controller.name,
                     location__name=site.name,
                     device_type__model=unifi_device.model,
-                    role__name=UNIFI_ROLE_MAP[unifi_device.type],
+                    role__name=UNIFI_MAP[unifi_type]["role"],
+                    serial=unifi_device.raw["serial"],
+                    platform__name=UNIFI_MAP[unifi_type]["platform"]
                 )
                 await self._debug("Adding device %s", device)
                 self.add(device)

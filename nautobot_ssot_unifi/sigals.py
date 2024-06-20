@@ -5,7 +5,7 @@ import inspect
 
 from django.apps import apps as global_apps
 
-from nautobot_ssot_unifi.const import UNIFI_MANUFACTURER, UNIFI_ROLE_MAP, UNIFI_SSOT_TAG
+from nautobot_ssot_unifi.const import UNIFI_MANUFACTURER, UNIFI_MAP, UNIFI_SSOT_TAG
 
 
 def _is_unifi_model(model_module, nautobot_model):
@@ -34,6 +34,7 @@ def nautobot_database_ready_callback(
         content_type = ContentType.objects.get_for_model(cls._model)  # pylint:disable=protected-access
         tag.content_types.add(content_type)
 
+    Platform = apps.get_model("dcim", "platform")
     Manufacturer = apps.get_model("dcim", "manufacturer")
     Device = apps.get_model("dcim", "device")
     Interface = apps.get_model("dcim", "interface")
@@ -45,10 +46,15 @@ def nautobot_database_ready_callback(
     )
     custom_field.content_types.add(ContentType.objects.get_for_model(Interface))
 
-    Manufacturer.objects.get_or_create(name=UNIFI_MANUFACTURER)
+    manufacturer, _ = Manufacturer.objects.get_or_create(name=UNIFI_MANUFACTURER)
 
     content_type = ContentType.objects.get_for_model(Device)
     Role = apps.get_model("extras", "role")
-    for role_name in UNIFI_ROLE_MAP.values():
-        role, _ = Role.objects.get_or_create(name=role_name)
+    for info in UNIFI_MAP.values():
+        role, _ = Role.objects.get_or_create(name=info["role"])
         role.content_types.add(content_type)
+        Platform.objects.update_or_create(
+            name=info["platform"],
+            manufacturer=manufacturer,
+            defaults={"napalm_driver": info["napalm_driver"]},
+        )

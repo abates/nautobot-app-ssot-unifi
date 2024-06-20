@@ -95,11 +95,14 @@ class DeviceTypeModel(UnifiModelMixin, NautobotModel):
         "manufacturer__name",
         "model",
     )
-    _attributes = tuple()
+    _attributes = (
+        "part_number",
+    )
 
     manufacturer__name: str = UNIFI_MANUFACTURER
     model: str
 
+    part_number: str = ""
 
 class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
     """Device model."""
@@ -115,6 +118,8 @@ class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
         "device_type__model",
         "role__name",
         "location__name",
+        "serial",
+        "platform__name",
         "primary_ip4__host",
         "primary_ip6__host",
     )
@@ -126,6 +131,8 @@ class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
     device_type__model: str
     role__name: str
     location__name: str
+    serial: str
+    platform__name: str
     primary_ip4__host: str = None
     primary_ip6__host: str = None
 

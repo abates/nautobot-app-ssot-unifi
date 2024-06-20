@@ -32,6 +32,7 @@ python = ">=3.11,<3.12"
 nautobot = "^2.2.0"
 nautobot-ssot = "^2.0.0"
 aiounifi = "74"
+napalm-unifi = "^0.2.4"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "*"

@@ -1,6 +1,7 @@
 """Jobs for Unifi SSoT integration."""
-
+import csv
 import logging
+from os import path
 from urllib.parse import urlparse
 
 from django.core.exceptions import ValidationError
@@ -120,10 +121,16 @@ class UnifiDataSource(DataSource, Job):
         self.controller = controller
         self.default_location = default_location or controller.location
         self.location_type = location_type
+        self.hardware_models = {}
         if self.debug:
             self.logger.setLevel(logging.DEBUG)
         else:
             self.logger.setLevel(logging.INFO)
+        with open(path.join(path.dirname(__file__), "hardware_models.csv")) as csvfile:
+            reader = csv.DictReader(csvfile)
+            for record in reader:
+                self.hardware_models[record["model"]] = record
+
         super().run(dryrun=self.dryrun, *args, **kwargs)
 
 
