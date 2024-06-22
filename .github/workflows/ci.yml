@@ -186,6 +186,7 @@ jobs:
         run: "cp development/creds.example.env development/creds.env"
       - name: "Use Mysql invoke settings when needed"
         run: "cp invoke.mysql.yml invoke.yml"
-        if: "matrix.db-backend == 'mysql'"
+        if: |
+          matrix.db-backend == 'mysql'
       - name: "Run Tests"
         run: "poetry run invoke unittest"
