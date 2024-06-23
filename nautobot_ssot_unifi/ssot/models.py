@@ -73,16 +73,16 @@ class UnifiModelMixin:
         return self
 
 
-class SiteModel(UnifiModelMixin, NautobotModel):
+class SiteModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
     """Location model for sites."""
 
     _model = Location
     _modelname = "site"
     _identifiers = ("name",)
-    _attributes = ("status__name", "location_type__name")
+    _attributes = ("location_type__name",)
 
     name: str
-    status__name: str = "Active"
+    status_id: uuid.UUID = None
     location_type__name: str = ""
 
 
@@ -137,6 +137,30 @@ class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
 
     status_id: uuid.UUID = None
 
+    @classmethod
+    def create(cls, diffsync: "UnifiNautobotAdapter", ids, attrs):
+        """Create the device.
+
+        This overridden method removes the primary IP addresses since those
+        cannot be set until after the interfaces are created. The primary IPs
+        are set in the `sync_complete` callback of the adapter.
+
+        Args:
+            diffsync (UnifiNautobotAdapter): The nautobot sync adapter.
+            ids (dict[str, Any]): The natural keys for the device.
+            attrs (dict[str, Any]): The attributes to assign to the newly created
+                device.
+
+        Returns:
+            DeviceModel: The device model.
+        """
+        if attrs["primary_ip4__host"] or attrs["primary_ip6__host"]:
+            diffsync._primary_ips.append({
+                "device": {**ids},
+                "primary_ip4": attrs.pop("primary_ip4__host", None),
+                "primary_ip6": attrs.pop("primary_ip4__host", None),
+            })
+        return super().create(diffsync, ids, attrs)
 
 class DeviceGroupModel(UnifiModelMixin, NautobotModel):
     """DeviceGroup model."""
@@ -191,7 +215,7 @@ class InterfaceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
         can still find the interfaces.
         """
         attrs["name"] = ids["label"]
-        super().create(diffsync, ids, attrs)
+        return super().create(diffsync, ids, attrs)
 
 
 class PrefixModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
