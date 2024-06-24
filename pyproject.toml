@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nautobot-ssot-unifi"
-version = "1.0.0"
+version = "1.0.1"
 description = "Nautobot SSoT integration for Ubiquiti Unifi."
 authors = ["Andrew Bates <abates@omeganetserv.com>"]
 license = "Apache-2.0"
