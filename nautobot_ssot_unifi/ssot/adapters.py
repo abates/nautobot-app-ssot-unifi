@@ -1,12 +1,18 @@
 """Adapters for diffsync models between Unifi and Nautobot."""
 
+from typing import Any, Dict, List
 from diffsync import DiffSync
 
 from asgiref.sync import sync_to_async, async_to_sync
 
+from diffsync.diff import Diff
+from diffsync.enum import DiffSyncFlags
 from nautobot.apps.jobs import Job
+from nautobot.dcim.models import Device
+from nautobot.ipam.models import IPAddress
 
 from nautobot_ssot.contrib import NautobotAdapter
+from structlog import BoundLogger
 
 from nautobot_ssot_unifi.const import UNIFI_MAP, UNIFI_SSOT_INTERFACE_TYPES
 from nautobot_ssot_unifi.ssot import models
@@ -42,6 +48,24 @@ class UnifiAdapterMixin:
 
 class UnifiNautobotAdapter(UnifiAdapterMixin, NautobotAdapter):
     """Adapter to connect to Nautobot."""
+
+    _primary_ips: List[Dict[str, Any]]
+
+    def __init__(self, *args, job, sync=None, **kwargs):
+        """Initialize the adapter."""
+        super().__init__(*args, job=job, sync=sync, **kwargs)
+        self._primary_ips = []
+
+    def sync_complete(
+        self, source: DiffSync, diff: Diff, flags: DiffSyncFlags = DiffSyncFlags.NONE, logger: BoundLogger | None = None
+    ) -> None:
+        """Update devices with their primary IPs once the sync is complete."""
+        for info in self._primary_ips:
+            device = Device.objects.get(**info["device"])
+            for ip in ["primary_ip4", "primary_ip6"]:
+                if info[ip]:
+                    setattr(device, ip, IPAddress.objects.get(host=info[ip]))
+            device.validated_save()
 
 
 class UnifiAdapter(UnifiAdapterMixin, DiffSync):
