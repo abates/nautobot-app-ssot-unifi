@@ -155,12 +155,15 @@ class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
             DeviceModel: The device model.
         """
         if attrs["primary_ip4__host"] or attrs["primary_ip6__host"]:
-            diffsync._primary_ips.append({
-                "device": {**ids},
-                "primary_ip4": attrs.pop("primary_ip4__host", None),
-                "primary_ip6": attrs.pop("primary_ip4__host", None),
-            })
+            diffsync._primary_ips.append(
+                {
+                    "device": {**ids},
+                    "primary_ip4": attrs.pop("primary_ip4__host", None),
+                    "primary_ip6": attrs.pop("primary_ip4__host", None),
+                }
+            )
         return super().create(diffsync, ids, attrs)
+
 
 class DeviceGroupModel(UnifiModelMixin, NautobotModel):
     """DeviceGroup model."""

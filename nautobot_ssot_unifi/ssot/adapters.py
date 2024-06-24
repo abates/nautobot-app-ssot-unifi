@@ -48,6 +48,7 @@ class UnifiAdapterMixin:
 
 class UnifiNautobotAdapter(UnifiAdapterMixin, NautobotAdapter):
     """Adapter to connect to Nautobot."""
+
     _primary_ips: List[Dict[str, Any]]
 
     def __init__(self, *args, job, sync=None, **kwargs):
@@ -55,7 +56,9 @@ class UnifiNautobotAdapter(UnifiAdapterMixin, NautobotAdapter):
         super().__init__(*args, job=job, sync=sync, **kwargs)
         self._primary_ips = []
 
-    def sync_complete(self, source: DiffSync, diff: Diff, flags: DiffSyncFlags = DiffSyncFlags.NONE, logger: BoundLogger | None = None) -> None:
+    def sync_complete(
+        self, source: DiffSync, diff: Diff, flags: DiffSyncFlags = DiffSyncFlags.NONE, logger: BoundLogger | None = None
+    ) -> None:
         """Update devices with their primary IPs once the sync is complete."""
         for info in self._primary_ips:
             device = Device.objects.get(**info["device"])
@@ -63,6 +66,7 @@ class UnifiNautobotAdapter(UnifiAdapterMixin, NautobotAdapter):
                 if info[ip]:
                     setattr(device, ip, IPAddress.objects.get(host=info[ip]))
             device.validated_save()
+
 
 class UnifiAdapter(UnifiAdapterMixin, DiffSync):
     """Adapter to connect to Unifi."""
