@@ -48,7 +48,7 @@ namespace = Collection("nautobot_ssot_unifi")
 namespace.configure(
     {
         "nautobot_ssot_unifi": {
-            "nautobot_ver": "2.2",
+            "nautobot_ver": "2.3",
             "project_name": "nautobot-ssot-unifi",
             "python_ver": "3.11",
             "local": False,
@@ -701,7 +701,7 @@ def autoformat(context):
         "output_format": "see https://docs.astral.sh/ruff/settings/#output-format",
     },
 )
-def ruff(context, action="lint", fix=False, output_format="text"):
+def ruff(context, action="lint", fix=False, output_format="concise"):
     """Run ruff to perform code formatting and/or linting."""
     if action != "lint":
         command = "ruff format"

@@ -1,7 +1,7 @@
 """Adapters for diffsync models between Unifi and Nautobot."""
 
 from typing import Any, Dict, List
-from diffsync import DiffSync
+from diffsync import Adapter
 
 from asgiref.sync import sync_to_async, async_to_sync
 
@@ -57,7 +57,7 @@ class UnifiNautobotAdapter(UnifiAdapterMixin, NautobotAdapter):
         self._primary_ips = []
 
     def sync_complete(
-        self, source: DiffSync, diff: Diff, flags: DiffSyncFlags = DiffSyncFlags.NONE, logger: BoundLogger | None = None
+        self, source: Adapter, diff: Diff, flags: DiffSyncFlags = DiffSyncFlags.NONE, logger: BoundLogger | None = None
     ) -> None:
         """Update devices with their primary IPs once the sync is complete."""
         for info in self._primary_ips:
@@ -68,7 +68,7 @@ class UnifiNautobotAdapter(UnifiAdapterMixin, NautobotAdapter):
             device.validated_save()
 
 
-class UnifiAdapter(UnifiAdapterMixin, DiffSync):
+class UnifiAdapter(UnifiAdapterMixin, Adapter):
     """Adapter to connect to Unifi."""
 
     def __init__(
