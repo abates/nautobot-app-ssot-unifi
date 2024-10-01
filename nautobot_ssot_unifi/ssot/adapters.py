@@ -57,7 +57,11 @@ class UnifiNautobotAdapter(UnifiAdapterMixin, NautobotAdapter):
         self._primary_ips = []
 
     def sync_complete(
-        self, source: Adapter, adapter: Diff, flags: DiffSyncFlags = DiffSyncFlags.NONE, logger: BoundLogger | None = None
+        self,
+        source: Adapter,
+        adapter: Diff,
+        flags: DiffSyncFlags = DiffSyncFlags.NONE,
+        logger: BoundLogger | None = None,
     ) -> None:
         """Update devices with their primary IPs once the sync is complete."""
         for info in self._primary_ips:
