@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 
 from nautobot.apps.jobs import BooleanVar, Job, ObjectVar, register_jobs
 
-from nautobot.dcim.models import Controller, LocationType
+from nautobot.dcim.models import Controller, LocationType, Location
 from nautobot.extras.models import ExternalIntegration, SecretsGroup, SecretsGroupAssociation
 from nautobot.extras.choices import SecretsGroupAccessTypeChoices, SecretsGroupSecretTypeChoices
 
@@ -32,9 +32,9 @@ class UnifiDataSource(DataSource, Job):
         model=LocationType,
         required=False,
     )
-    default_location: LocationType = ObjectVar(
+    default_location: Location = ObjectVar(
         description="Override the 'default' site with this location. If not specified, the controller's location will be used.",
-        model=LocationType,
+        model=Location,
         required=False,
     )
 
@@ -92,7 +92,7 @@ class UnifiDataSource(DataSource, Job):
         )
 
         default_location_name = self.default_location.name
-        default_location_type = self.default_location.location_type.name
+        default_location_type = self.default_location_type.name
         self.source_adapter = adapters.UnifiAdapter(
             job=self,
             controller_name=self.controller.name,
@@ -121,7 +121,7 @@ class UnifiDataSource(DataSource, Job):
         self.debug = debug
         self.controller = controller
         self.default_location = default_location or controller.location
-        self.location_type = location_type
+        self.default_location_type = location_type or self.default_location.location_type
         self.hardware_models = {}
         if self.debug:
             self.logger.setLevel(logging.DEBUG)

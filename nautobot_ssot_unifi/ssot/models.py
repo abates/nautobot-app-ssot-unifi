@@ -1,6 +1,6 @@
 """Nautobot DiffSync models for Unifi SSoT."""
 
-from typing import TYPE_CHECKING, Annotated
+from typing import TYPE_CHECKING, Annotated, Optional
 import uuid
 
 from nautobot_ssot.contrib import NautobotModel, CustomFieldAnnotation
@@ -20,10 +20,10 @@ class ActiveStatusMixin:
     """A mixin that sets the status to active upon creation."""
 
     @classmethod
-    def create(cls, diffsync: "UnifiNautobotAdapter", ids, attrs):
+    def create(cls, adapter: "UnifiNautobotAdapter", ids, attrs):
         """This overridden method makes sure to set the object status as `Active` when created."""
         attrs["status_id"] = Status.objects.get(name="Active").id
-        return super().create(diffsync, ids, attrs)
+        return super().create(adapter, ids, attrs)
 
 
 class UnifiModelMixin:
@@ -35,7 +35,7 @@ class UnifiModelMixin:
         return super().get_queryset().filter(tags__name=UNIFI_SSOT_TAG)
 
     @classmethod
-    def create(cls, diffsync: "UnifiNautobotAdapter", ids, attrs):
+    def create(cls, adapter: "UnifiNautobotAdapter", ids, attrs):
         """Create will either create or update a Nautobot object.
 
         This method will first look for a corresponding object in the
@@ -45,7 +45,7 @@ class UnifiModelMixin:
         the object is created.
 
         Args:
-            diffsync (UnifiNautobotAdapter): The diffsync adapter.
+            adapter (UnifiNautobotAdapter): The diffsync adapter.
             ids (dict): Dictionary of fields and values to find the object.
             attrs (dict): Dictionary of fields and values that need to be assigned.
 
@@ -57,7 +57,7 @@ class UnifiModelMixin:
             obj.tags.add(Tag.objects.get(name=UNIFI_SSOT_TAG))
             return cls(**{**ids, **attrs, "pk": obj.pk})
         except cls._model.DoesNotExist:
-            model = super().create(diffsync, ids, attrs)
+            model = super().create(adapter, ids, attrs)
             cls._model.objects.get(**ids).tags.add(Tag.objects.get(name=UNIFI_SSOT_TAG))
             return model
 
@@ -132,13 +132,13 @@ class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
     location__name: str
     serial: str
     platform__name: str
-    primary_ip4__host: str = None
-    primary_ip6__host: str = None
+    primary_ip4__host: Optional[str] = None
+    primary_ip6__host: Optional[str] = None
 
     status_id: uuid.UUID = None
 
     @classmethod
-    def create(cls, diffsync: "UnifiNautobotAdapter", ids, attrs):
+    def create(cls, adapter: "UnifiNautobotAdapter", ids, attrs):
         """Create the device.
 
         This overridden method removes the primary IP addresses since those
@@ -146,7 +146,7 @@ class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
         are set in the `sync_complete` callback of the adapter.
 
         Args:
-            diffsync (UnifiNautobotAdapter): The nautobot sync adapter.
+            adapter (UnifiNautobotAdapter): The nautobot sync adapter.
             ids (dict[str, Any]): The natural keys for the device.
             attrs (dict[str, Any]): The attributes to assign to the newly created
                 device.
@@ -155,14 +155,14 @@ class DeviceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
             DeviceModel: The device model.
         """
         if attrs["primary_ip4__host"] or attrs["primary_ip6__host"]:
-            diffsync._primary_ips.append(
+            adapter._primary_ips.append(
                 {
                     "device": {**ids},
                     "primary_ip4": attrs.pop("primary_ip4__host", None),
                     "primary_ip6": attrs.pop("primary_ip4__host", None),
                 }
             )
-        return super().create(diffsync, ids, attrs)
+        return super().create(adapter, ids, attrs)
 
 
 class DeviceGroupModel(UnifiModelMixin, NautobotModel):
@@ -210,7 +210,7 @@ class InterfaceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
     status_id: uuid.UUID = None
 
     @classmethod
-    def create(cls, diffsync: "UnifiNautobotAdapter", ids, attrs):
+    def create(cls, adapter: "UnifiNautobotAdapter", ids, attrs):
         """Create a new interface.
 
         This overridden create will set the interface name. That way the interface name
@@ -218,7 +218,7 @@ class InterfaceModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
         can still find the interfaces.
         """
         attrs["name"] = ids["label"]
-        return super().create(diffsync, ids, attrs)
+        return super().create(adapter, ids, attrs)
 
 
 class PrefixModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
@@ -236,10 +236,10 @@ class PrefixModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
     type: str = None
 
     @classmethod
-    def create(cls, diffsync: "UnifiNautobotAdapter", ids, attrs):
+    def create(cls, adapter: "UnifiNautobotAdapter", ids, attrs):
         """This overridden method makes sure to set the prefix type when created."""
         attrs["type"] = PrefixTypeChoices.TYPE_NETWORK
-        return super().create(diffsync, ids, attrs)
+        return super().create(adapter, ids, attrs)
 
 
 class IPAddressModel(ActiveStatusMixin, UnifiModelMixin, NautobotModel):
