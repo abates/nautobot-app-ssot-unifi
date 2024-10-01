@@ -57,7 +57,7 @@ class UnifiNautobotAdapter(UnifiAdapterMixin, NautobotAdapter):
         self._primary_ips = []
 
     def sync_complete(
-        self, source: Adapter, diff: Diff, flags: DiffSyncFlags = DiffSyncFlags.NONE, logger: BoundLogger | None = None
+        self, source: Adapter, adapter: Diff, flags: DiffSyncFlags = DiffSyncFlags.NONE, logger: BoundLogger | None = None
     ) -> None:
         """Update devices with their primary IPs once the sync is complete."""
         for info in self._primary_ips:
@@ -149,7 +149,7 @@ class UnifiAdapter(UnifiAdapterMixin, Adapter):
             verify_cert=verify_cert,
             timeout=timeout,
         )
-        self._info("Loading data from the Unifi Controller %s", self.job.controller)
+        await self._info("Loading data from the Unifi Controller %s", self.job.controller)
         self.add(
             self.device_group(
                 name="default",
