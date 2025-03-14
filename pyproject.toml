@@ -29,8 +29,8 @@ include = [
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
 # Used for local development
-nautobot = "^2.4.0"
-nautobot-ssot = "^3.4.0"
+nautobot = "^2.3.0"
+nautobot-ssot = "^3.3.0"
 napalm-unifi = "*"
 aiounifi = "*"
 
