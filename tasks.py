@@ -48,9 +48,7 @@ namespace = Collection("nautobot_ssot_unifi")
 namespace.configure(
     {
         "nautobot_ssot_unifi": {
-            "nautobot_ver": "2.4",
             "project_name": "nautobot-ssot-unifi",
-            "python_ver": "3.12",
             "local": False,
             "compose_dir": os.path.join(os.path.dirname(__file__), "development"),
             "compose_files": [
@@ -119,12 +117,11 @@ def docker_compose(context, command, **kwargs):
         # Note: 'docker compose logs' will stop following after 60 seconds by default,
         # so we are overriding that by setting this environment variable.
         "COMPOSE_HTTP_TIMEOUT": context.nautobot_ssot_unifi.compose_http_timeout,
-        "NAUTOBOT_VER": context.nautobot_ssot_unifi.nautobot_ver,
-        "PYTHON_VER": context.nautobot_ssot_unifi.python_ver,
         **kwargs.pop("env", {}),
     }
     compose_command_tokens = [
         "docker compose",
+        "--env-file development/development.env",
         f"--project-name {context.nautobot_ssot_unifi.project_name}",
         f'--project-directory "{context.nautobot_ssot_unifi.compose_dir}"',
     ]
