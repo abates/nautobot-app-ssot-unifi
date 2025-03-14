@@ -32,7 +32,7 @@ python = ">=3.12,<3.13"
 nautobot = "^2.4.0"
 nautobot-ssot = "^3.4.0"
 napalm-unifi = "*"
-aiounifi = { git = "https://github.com/abates/aiounifi.git" }
+aiounifi = "*"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "*"
