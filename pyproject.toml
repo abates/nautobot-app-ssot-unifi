@@ -29,10 +29,10 @@ include = [
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
 # Used for local development
-nautobot = "2.3.4"
-nautobot-ssot = "^3.0.0"
+nautobot = "^2.4.0"
+nautobot-ssot = "^3.4.0"
 napalm-unifi = "*"
-aiounifi = "^80"
+aiounifi = { git = "https://github.com/abates/aiounifi.git" }
 
 [tool.poetry.group.dev.dependencies]
 bandit = "*"
