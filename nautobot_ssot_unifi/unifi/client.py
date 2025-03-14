@@ -26,7 +26,7 @@ def require_login(method):
     async def wrapper(self, *args, **kwargs):
         if not self.logged_in:
             await self.api.login()
-            await self.api.initialize()
+            await self.api.clients.update()
             self.logged_in = True
         return await method(self, *args, **kwargs)
 
@@ -90,9 +90,11 @@ class Client:
     @require_login
     async def get_sites(self) -> Iterable["Site"]:
         """Get an iterable of devices for the current site."""
+        await self.api.sites.update()
         return self.api.sites.values()
 
     @require_login
     async def get_devices(self) -> Iterable["Device"]:
         """Get an iterable of devices for the current site."""
+        await self.api.devices.update()
         return self.api.devices.values()

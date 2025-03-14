@@ -48,9 +48,9 @@ namespace = Collection("nautobot_ssot_unifi")
 namespace.configure(
     {
         "nautobot_ssot_unifi": {
-            "nautobot_ver": "2.3",
+            "nautobot_ver": "2.4",
             "project_name": "nautobot-ssot-unifi",
-            "python_ver": "3.11",
+            "python_ver": "3.12",
             "local": False,
             "compose_dir": os.path.join(os.path.dirname(__file__), "development"),
             "compose_files": [
