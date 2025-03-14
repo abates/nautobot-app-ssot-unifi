@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nautobot-ssot-unifi"
-version = "1.0.4"
+version = "1.0.3"
 description = "Nautobot SSoT integration for Ubiquiti Unifi."
 authors = ["Andrew Bates <abates@omeganetserv.com>"]
 license = "Apache-2.0"
@@ -32,7 +32,7 @@ python = ">=3.12,<3.13"
 nautobot = "^2.4.0"
 nautobot-ssot = "^3.4.0"
 napalm-unifi = "*"
-aiounifi = { git = "https://github.com/abates/aiounifi.git" }
+aiounifi = "*"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "*"
