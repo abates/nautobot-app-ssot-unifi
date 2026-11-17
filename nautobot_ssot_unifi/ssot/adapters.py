@@ -162,7 +162,7 @@ class UnifiAdapter(UnifiAdapterMixin, Adapter):
         )
         for site in await self.client.get_sites():
             site_name = site.name
-            self.client.site = site_name
+            self.client.current_site = site_name
             if site_name == "default":
                 site_name = self.default_location_name
                 location_type__name = self.default_location_type
