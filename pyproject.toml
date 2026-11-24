@@ -58,6 +58,9 @@ mkdocs-material = "9.1.15"
 # Automatic documentation from sources, for MkDocs
 mkdocstrings = "0.22.0"
 mkdocstrings-python = "1.5.2"
+# These handlers use the configuration and import APIs from these versions.
+mkdocs-autorefs = "0.5.0"
+griffe = "0.49.0"
 towncrier = "~23.6.0"
 to-json-schema = "*"
 jsonschema = "*"
